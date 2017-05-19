@@ -1,11 +1,15 @@
+const GOOGLE_FAVICON_SERVICE = "https://www.google.com/s2/favicons?domain_url="
+
 class Bookmark {
-  constructor(url, title, comment, tags){
-    this.url = url ? url : 'www.lemonde.fr'
-    this.title = title ? title : 'Titre'
-    this.comment = comment ? comment : 'comment'
-    this.tags = tags ? tags : []
-    this.date = new Date()
-    this.favIcon = "https://www.google.com/s2/favicons?domain_url=" + this.url
+  constructor(config){
+    this.url = 'http://www.lequipe.fr',
+    this.title = 'Title',
+    this.date = new Date(),
+    // Have to check and format url before save favIcon, because if there is a
+    // prefix it wont work
+    // favIcon: GOOGLE_FAVICON_SERVICE + config.url
+    this.favIcon = '',
+    Object.assign(this, config)
   }
 
   toHTML () {
@@ -13,8 +17,6 @@ class Bookmark {
     '<td><img src="' + this.favIcon + '"></td>' +
       '<td>' + this.url + '</td>' +
       '<td>' + this.title + '</td>' +
-      '<td>' + this.comment + '</td>' +
-      '<td>' + this.tags + '</td>' +
       '<td>' + this.date.toString() + '</td>' +
     '</tr>'
     return html

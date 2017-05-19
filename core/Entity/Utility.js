@@ -1,29 +1,42 @@
+// Improvements
+// - Dependencies should be injected
+// - requestTitle should be split into multiples functions
+// - addHttp dont support other prefix that http and https, wich is bad,
+// we could inject prefix list that has to be checked
+
 const url = require('url')
 const URL = require('url').URL
 const http = require('http')
 const https = require('https')
 
 class Utility {
-  constructor(){}
+  // If i try to inject dependencies that way, when the functions are called from
+  // the interactor, the instance (this) no longer exist and return undefined
+  constructor(dependencies){
+    // this.url = null
+    // this.URL = null
+    // this.http = null
+    // this.https = null
+    // Object.assign(this, dependencies)
+  }
 
-  static addHttp(string) {
+  addHttp(string) {
     if (string.indexOf('http://') == -1 && string.indexOf('https://') == -1){
       string = 'http://' + string
     }
     return string
   }
 
-  static isUrlValid(string) {
+  isUrlValid(string) {
     let tUrl = url.parse(string)
     if (url.format(tUrl)) return true
     else return false
   }
 
-  // Maybe this function could be at some other place. Can i put it as a static
-  // function of Bookmark entity ?
-  static requestTitle (bookmark) {
+  requestTitle (bookmark) {
     return new Promise((s, f) => {
       try {
+        console.log(bookmark.url)
         let urlObject = new URL(bookmark.url)
         let adapter = null
         if (urlObject.protocol == 'http:') adapter = http
@@ -31,11 +44,12 @@ class Utility {
 
         adapter.get(urlObject.href, (res) => {
           res.setEncoding('utf8')
-          const re = new RegExp("<title>(.*?)</title>", "i")
+          const findTitleRegExp = "<title>(.*?)</title>"
+          const findTitle = new RegExp( findTitleRegExp, "i")
 
           res.on('data', (chunk) => {
             let str = chunk.toString()
-            let match = re.exec(str)
+            let match = findTitle.exec(str)
             if (match && match[1]) {
               let urlTitle = match[1]
               bookmark.title = urlTitle

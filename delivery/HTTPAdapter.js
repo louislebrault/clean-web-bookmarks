@@ -1,9 +1,9 @@
 const fs = require('fs')
 
-const Bookmark = require('../core/Entity/bookmark')
-const Bookmarks = require('../core/Entity/bookmarks')
-const U = require('../core/Entity/Utility')
-
+const Bookmark = require('../core/Entity/Bookmark')
+const Bookmarks = require('../core/Entity/Bookmarks')
+const Utility = require('../core/Entity/Utility')
+const u = new Utility()
 
 const self = module.exports = {
   accessAppHttpAdapter: (res, currentUser) => {
@@ -31,18 +31,20 @@ const self = module.exports = {
 
   submitBookmarkHttpAdapter: async (req, res, user) => {
     let url = await extractPostData(req)
-    url = U.addHttp(url)
-    const bookmark = new Bookmark(url)
+    console.log(url)
+    url = u.addHttp(url)
+    console.log(url)
+    const bookmark = new Bookmark({url: url})
 
     return {
       url: url,
       bookmark: bookmark,
-      isUrlValid: U.isUrlValid,
+      isUrlValid: u.isUrlValid,
       addBookmark: () => {
         if (user.bookmarks) user.bookmarks.push(bookmark)
         else user.bookmarks = new Bookmarks([bookmark])
       },
-      requestTitle: U.requestTitle,
+      requestTitle: u.requestTitle,
       respondSuccess: () => {
         res.writeHead(200)
         res.write(bookmark.toHTML())
