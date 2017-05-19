@@ -70,17 +70,3 @@ function loadBookmarks (bookmarks) {
       })
   })
 }
-
-function sendFileContent (res, fileName, contentType) {
-  fs.readFile(fileName, function(err, data){
-    if(err){
-      res.writeHead(404)
-      res.write("Not Found!")
-    }
-    else{
-      res.writeHead(200, {'Content-Type': contentType})
-      res.write(data)
-    }
-    res.end()
-  })
-}
