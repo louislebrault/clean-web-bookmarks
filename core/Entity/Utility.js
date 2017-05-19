@@ -27,12 +27,6 @@ class Utility {
     return string
   }
 
-  isUrlValid(string) {
-    let tUrl = url.parse(string)
-    if (url.format(tUrl)) return true
-    else return false
-  }
-
   requestTitle (bookmark) {
     return new Promise((s, f) => {
       try {

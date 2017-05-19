@@ -1,5 +1,7 @@
 const fs = require('fs')
 
+const url = require('url')
+
 const Bookmark = require('../core/Entity/Bookmark')
 const Bookmarks = require('../core/Entity/Bookmarks')
 const Utility = require('../core/Entity/Utility')
@@ -39,7 +41,7 @@ const self = module.exports = {
     return {
       url: url,
       bookmark: bookmark,
-      isUrlValid: u.isUrlValid,
+      isUrlValid: isUrlValid,
       addBookmark: () => {
         if (user.bookmarks) user.bookmarks.push(bookmark)
         else user.bookmarks = new Bookmarks([bookmark])
@@ -100,4 +102,10 @@ function extractPostData(req) {
         s(body)
       })
     })
+  }
+
+  function isUrlValid(string) {
+    let tUrl = url.parse(string)
+    if (url.format(tUrl)) return true
+    else return false
   }
