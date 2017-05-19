@@ -1,7 +1,3 @@
-const URL = require('url').URL
-const http = require('http')
-const https = require('https')
-
 class Bookmark {
   constructor(url, title, comment, tags){
     this.url = url ? url : 'www.lemonde.fr'
@@ -23,6 +19,7 @@ class Bookmark {
     '</tr>'
     return html
   }
+
 }
 
 module.exports = Bookmark

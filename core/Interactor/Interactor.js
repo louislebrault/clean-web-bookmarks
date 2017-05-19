@@ -23,9 +23,31 @@ module.exports = {
     respondWelcome
   }){
     if(userHasBookmarks(user)){
-      await respondOwnerBookmarks()
+      await respondUserBookmarks()
     } else {
       await respondWelcome()
     }
-  }
+  },
+
+  // Sort bookmarks by date
+  // Is there bookmarks to sort ?
+  // If yes sort them
+  // then send success response
+  // If no send failure response
+  sortBookmarksByDate: async function ({
+    user,
+    bookmarks,
+    userHasBookmarks,
+    sortBookmarksByDate,
+    respondSortedBookmarks,
+    respondFailure
+  }){
+    if(userHasBookmarks(user)){
+      await sortBookmarksByDate(bookmarks)
+      await respondSuccess()
+    } else {
+      await respondFailure();
+    }
+
+  })
 }

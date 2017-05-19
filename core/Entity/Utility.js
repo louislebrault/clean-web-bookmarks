@@ -19,23 +19,26 @@ class Utility {
     else return false
   }
 
-  static requestTitle (url) {
+  // Maybe this function could be at some other place. Can i put it as a static
+  // function of Bookmark entity ?
+  static requestTitle (bookmark) {
     return new Promise((s, f) => {
       try {
-        let urlObject = new URL(url)
+        let urlObject = new URL(bookmark.url)
         let adapter = null
         if (urlObject.protocol == 'http:') adapter = http
         else if (urlObject.protocol == 'https:') adapter = https
 
         adapter.get(urlObject.href, (res) => {
           res.setEncoding('utf8')
-          var re = new RegExp("<title>(.*?)</title>", "i")
+          const re = new RegExp("<title>(.*?)</title>", "i")
 
           res.on('data', (chunk) => {
             let str = chunk.toString()
             let match = re.exec(str)
             if (match && match[1]) {
               let urlTitle = match[1]
+              bookmark.title = urlTitle
               s(urlTitle)
             }
           })
