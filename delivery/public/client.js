@@ -5,7 +5,6 @@ let container = document.getElementById('container')
 addButton.onclick = e => {
   const req = new XMLHttpRequest();
   req.onloadend = e => {
-    console.log(req.response)
     appendResponse(req.response)
   }
   req.open('POST', 'http://localhost:8080/add', true);
@@ -14,6 +13,5 @@ addButton.onclick = e => {
 }
 
 const appendResponse = res => {
-  console.log(res)
   container.innerHTML += res
 }

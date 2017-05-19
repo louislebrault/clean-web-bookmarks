@@ -1,6 +1,11 @@
 const fs = require('fs')
 
-module.exports = {
+const Bookmark = require('../core/Entity/bookmark')
+const Bookmarks = require('../core/Entity/bookmarks')
+const U = require('../core/Entity/Utility')
+
+
+const self = module.exports = {
   accessAppHttpAdapter: (res, currentUser) => {
 
     return {
@@ -19,25 +24,36 @@ module.exports = {
         })
       },
       respondWelcome: () => {
-        sendFileContent(res, './public/index.html', 'text/html')
+        self.sendFileContent(res, './public/index.html', 'text/html')
       },
     }
   },
 
-  // submitBookmarkHttpAdapter: () => {
-  //   const url = ''
-  //   const bookmark = ''
-  //
-  //   return {
-  //     url:'',
-  //     bookmark: '',
-  //     isUrlValid: 0,
-  //     addBookmark: 0,
-  //     requestTitle: 0,
-  //     respondSuccess: 0,
-  //     respondFailure: 0
-  //   }
-  // }
+  submitBookmarkHttpAdapter: async (req, res, user) => {
+    let url = await extractPostData(req)
+    url = U.addHttp(url)
+    const bookmark = new Bookmark(url)
+
+    return {
+      url: url,
+      bookmark: bookmark,
+      isUrlValid: U.isUrlValid,
+      addBookmark: () => {
+        if (user.bookmarks) user.bookmarks.push(bookmark)
+        else user.bookmarks = new Bookmarks([bookmark])
+      },
+      requestTitle: U.requestTitle,
+      respondSuccess: () => {
+        res.writeHead(200)
+        res.write(bookmark.toHTML())
+        res.end()
+      },
+      respondFailure: () => {
+        console.log('respondFailure')
+        res.end()
+      }
+    }
+  },
 
   sendFileContent: (res, fileName, contentType) => {
     fs.readFile(fileName, function(err, data){
@@ -52,6 +68,7 @@ module.exports = {
       res.end()
     })
   }
+
 }
 
 function loadBookmarks (bookmarks) {
@@ -70,3 +87,15 @@ function loadBookmarks (bookmarks) {
       })
   })
 }
+
+function extractPostData(req) {
+    let body = ''
+    return new Promise(s => {
+      req.on('data', function(chunk){
+        body += chunk
+      })
+      req.on('end', () => {
+        s(body)
+      })
+    })
+  }
