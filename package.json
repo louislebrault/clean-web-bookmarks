@@ -1,0 +1,23 @@
+{
+  "name": "clean-web-bookmarks",
+  "version": "1.0.0",
+  "description": "An example of clean architecture implementation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/louislebrault/clean-web-bookmarks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/louislebrault/clean-web-bookmarks/issues"
+  },
+  "homepage": "https://github.com/louislebrault/clean-web-bookmarks#readme",
+  "dependencies": {
+    "mocha": "^3.4.1",
+    "sinon": "^2.2.0"
+  }
+}

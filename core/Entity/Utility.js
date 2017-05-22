@@ -10,14 +10,7 @@ const http = require('http')
 const https = require('https')
 
 class Utility {
-  // If i try to inject dependencies that way, when the functions are called from
-  // the interactor, the instance (this) no longer exist and return undefined
-  constructor(dependencies){
-    // this.url = null
-    // this.URL = null
-    // this.http = null
-    // this.https = null
-    // Object.assign(this, dependencies)
+  constructor(){
   }
 
   addHttp(string) {
@@ -63,3 +56,47 @@ class Utility {
 }
 
 module.exports = Utility
+
+// // What is Utility's methods become uses cases
+//
+// // addHttp become formatUrl
+// formatUrl: async function({
+//   url,
+//   defaultPrefix,
+//   isPrefixMissing,
+//   addDefaultPrefix,
+//   respondFormatedUrl,
+//   respondUnchangedUrl
+// }){
+//   if (isPrefixMissing(url)){
+//     await addDefaultPrefix(url, defaultPrefix)
+//     await respondFormatedUrl()
+//   } else {
+//     await respondUnchangedUrl()
+//   }
+// }
+//
+// requestTitle: async function({
+//   url,
+//   response,
+//   title,
+//   requestUrl,
+//   isRequestResponsed,
+//   findTitleInResponse,
+//   isTitleFound,
+//   respondTitle,
+//   respondTitleNotFound,
+//   respondRequestNotResponsed
+// }){
+//   await requestUrl(url)
+//   if (isRequestResponsed()){
+//     await findTitleInResponse(response)
+//     if (isTitleFound(title)){
+//       respondTitle()
+//     } else {
+//       respondTitleNotFound()
+//     }
+//   } else {
+//     respondRequestNoResponse()
+//   }
+// }
