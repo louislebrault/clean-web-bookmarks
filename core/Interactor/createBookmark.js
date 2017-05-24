@@ -1,30 +1,30 @@
 const Bookmark = require('../Entity/Bookmark')
+const validateUrl = require('../Customs/bookmarkCustoms').validateUrl
+const validateTitle = require('../Customs/bookmarkCustoms').validateTitle
 
-  exports.createBookmark = async (request, plug) => {
-    console.log(request)
-    if (validate(request)) {
-      let bookmark = new Bookmark(request)
-      plug.createBookmark(bookmark)
-      return bookmark
-    } else {
-      return {
-        error: 'Validation error'
-      }
-    }
+exports.createBookmark = async function (request, plug) {
+    validateRequest(request)
+    validatePlug(plug)
+    let bookmark = new Bookmark(request)
+    plug.createBookmark(bookmark)
+    return bookmark
+}
 
-  }
+function validateRequest(request){
+  validateRequestShape(request)
+  validateUrl(request.url)
+  validateTitle(request.title)
+}
 
+function validateRequestShape(request){
+  if (Object.keys(request).length === 2){
+    if (request.hasOwnProperty('url') && request.hasOwnProperty('title')){
+      return true
+    } else throw 'ShapeError: wrong request object property'
+  } else throw 'ShapeError: request object keys length != 2'
+}
 
-// faudrait regarder sur le framework obvious comment sont fait les tests de
-// validation, j'aime pas ces imbrications de if.
-// faut que le taf soit fait sur le prefix aussi
-const validate = request => {
-  if (request.url) {
-    if (request.url.path && request.url.prefix){
-      if (typeof request.url.path === "string" && request.url.path.length <= 300) {
-        return true
-      }
-    }
-  }
-  return false
+function validatePlug(plug){
+  if (plug.hasOwnProperty('createBookmark')) return true
+  else throw 'ShapeError: plug object has no createBookmark property'
 }

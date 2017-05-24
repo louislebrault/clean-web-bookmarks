@@ -1,12 +1,13 @@
-const A = require('./HTTPAdapter')
+const createBookmarkHttpAdapter = require('./HTTPAdapter').createBookmarkHttpAdapter
+const loadBookmarksHttpAdapter = require('./HTTPAdapter').loadBookmarksHttpAdapter
+const sendFileContent = require('./HTTPAdapter').sendFileContent
+
 const mongoPlug = require('../../external/mongo_plug')
 
 const http = require('http')
-
-
 const app = http.createServer()
-app.listen(8080)
 
+app.listen(8080)
 mongoPlug.connectDB()
 
 app.on('request', async (req, res) => {
@@ -15,7 +16,7 @@ app.on('request', async (req, res) => {
   if (req.method == "POST"){
     if(req.url == "/add"){
       try {
-        A.createBookmarkHttpAdapter(req, res, mongoPlug)
+        createBookmarkHttpAdapter(req, res, mongoPlug)
       } catch (err) {
         console.log(err)
       }
@@ -26,19 +27,19 @@ app.on('request', async (req, res) => {
     switch(req.url) {
       case '/load':
         try {
-          A.loadBookmarksHttpAdapter(req, res, mongoPlug)
+          loadBookmarksHttpAdapter(req, res, mongoPlug)
           break
         } catch (err) {
           console.log(err)
         }
       case '/':
-        A.sendFileContent(res, './public/index.html', 'text/html')
+        sendFileContent(res, './public/index.html', 'text/html')
         break
       case '/style.css':
-        A.sendFileContent(res, './public/style.css', 'text/css')
+        sendFileContent(res, './public/style.css', 'text/css')
         break
       case '/client.js':
-        A.sendFileContent(res, './public/client.js', 'application/javascript')
+        sendFileContent(res, './public/client.js', 'application/javascript')
         break
       default:
         res.end()

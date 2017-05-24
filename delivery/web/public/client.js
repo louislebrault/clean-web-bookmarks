@@ -2,6 +2,8 @@ let addButton = document.getElementById('addButton')
 let addInput = document.getElementById('addInput')
 let container = document.getElementById('container')
 
+loadBookmarks()
+
 addButton.onclick = e => {
   let req = new XMLHttpRequest();
   req.onloadend = e => {
@@ -13,11 +15,11 @@ addButton.onclick = e => {
   req.send(val);
 }
 
-const prependHTML = res => {
+function prependHTML(res){
   container.innerHTML = res + container.innerHTML
 }
 
-const bookmarkToHTML = (bookmark) => {
+function bookmarkToHTML(bookmark){
   let html = '<tr>'+
   '<td><img src="' + bookmark.favIcon + '"></td>' +
     '<td><a href="' + bookmark.url.prefix + bookmark.url.path +'">' + bookmark.url.path + '</a></td>' +
@@ -27,7 +29,7 @@ const bookmarkToHTML = (bookmark) => {
   return html
 }
 
-const loadBookmarks = () => {
+function loadBookmarks(){
   let req = new XMLHttpRequest()
   req.onloadend = e => {
     bookmarks = JSON.parse(req.response)
@@ -38,5 +40,3 @@ const loadBookmarks = () => {
   req.open('GET', 'http://localhost:8080/load', true);
   req.send();
 }
-
-loadBookmarks()

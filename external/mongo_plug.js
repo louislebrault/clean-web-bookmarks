@@ -29,8 +29,7 @@ let MongoPlug = {
         if (err) {
           f(null)
         }
-        console.log("Found the following records");
-        console.log(docs)
+        console.log("Found records");
         s(docs)
       });
     })

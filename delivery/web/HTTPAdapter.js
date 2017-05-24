@@ -4,10 +4,9 @@ const createBookmark = require('../../core/Interactor/createBookmark').createBoo
 const loadBookmarks = require('../../core/Interactor/loadBookmarks').loadBookmarks
 
 const self = module.exports = {
-  loadBookmarksHttpAdapter: async (req, res, plug) => {
+  loadBookmarksHttpAdapter: async function(req, res, plug){
     try {
       let bookmarks = await loadBookmarks(plug)
-
       if (bookmarks){
         res.writeHead(200, {'Content-Type': 'application/json'})
         res.write(JSON.stringify(bookmarks))
@@ -15,10 +14,11 @@ const self = module.exports = {
       } else res.end()
     } catch (err) {
       console.log(err)
+      res.write(err).end()
     }
   },
 
-  createBookmarkHttpAdapter: async (req, res, plug) => {
+  createBookmarkHttpAdapter: async function(req, res, plug){
     try {
       let urlString = await extractPostData(req)
       let url = formatUrl(urlString)
@@ -32,7 +32,7 @@ const self = module.exports = {
     }
   },
 
-  sendFileContent: (res, fileName, contentType) => {
+  sendFileContent: function(res, fileName, contentType){
     fs.readFile(fileName, function(err, data){
       if(err){
         res.writeHead(404)
@@ -106,7 +106,7 @@ function findTitleInResponse(res){
   })
 }
 
-function requestTitle (url) {
+function requestTitle(url){
   return new Promise (async function(s,f){
     let res = await requestUrl(url)
     let title = await findTitleInResponse(res)
