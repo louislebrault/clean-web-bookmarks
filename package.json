@@ -18,6 +18,7 @@
   "homepage": "https://github.com/louislebrault/clean-web-bookmarks#readme",
   "dependencies": {
     "mocha": "^3.4.1",
+    "mongodb": "^2.2.27",
     "sinon": "^2.2.0"
   }
 }
