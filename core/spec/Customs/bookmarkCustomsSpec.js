@@ -19,7 +19,9 @@ describe('bookmarkCustoms', () => {
     })
 
     it('should throw an error with wrong params', () => {
-      const missingFieldUrl = {url: 'www.lemonde.fr'}
+      const missingFieldUrl = {
+        url: 'www.lemonde.fr'
+      }
       assert.throws(() => validateUrl(missingFieldUrl))
     })
 
@@ -32,7 +34,9 @@ describe('bookmarkCustoms', () => {
     })
 
     it('should throw an error if a field is missing', () => {
-      const missingFieldUrl = {url: 'www.lemonde.fr'}
+      const missingFieldUrl = {
+        url: 'www.lemonde.fr'
+      }
       assert.throws(() => validateUrlShape(missingFieldUrl))
     })
 
@@ -68,7 +72,9 @@ describe('bookmarkCustoms', () => {
 
     it('should throw an error if path length over 300', () => {
       let tooLongPath = ''
-      for (let i = 0; i < 301; i++) { tooLongPath += 'z' }
+      for (let i = 0; i < 301; i++) {
+        tooLongPath += 'z'
+      }
       assert.throws(() => validateUrlPath(tooLongPath))
     })
   })
@@ -104,7 +110,9 @@ describe('bookmarkCustoms', () => {
 
     it('should throw an error if title length over 150', () => {
       let tooLongTitle = ''
-      for (let i = 0; i < 301; i++) { tooLongTitle += 'z' }
+      for (let i = 0; i < 301; i++) {
+        tooLongTitle += 'z'
+      }
       assert.throws(() => validateTitle(tooLongTitle))
     })
   })
