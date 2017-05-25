@@ -1,10 +1,10 @@
 const assert = require('assert')
 
-const validateUrl = require('../../Customs/bookmarkCustoms').validateUrl
-const validateUrlShape = require('../../Customs/bookmarkCustoms').validateUrlShape
-const validateUrlPath = require('../../Customs/bookmarkCustoms').validateUrlPath
-const validateUrlPrefix = require('../../Customs/bookmarkCustoms').validateUrlPrefix
-const validateTitle = require('../../Customs/bookmarkCustoms').validateTitle
+const validateUrl = require('../../customs/bookmarkCustoms').validateUrl
+const validateUrlShape = require('../../customs/bookmarkCustoms').validateUrlShape
+const validateUrlPath = require('../../customs/bookmarkCustoms').validateUrlPath
+const validateUrlPrefix = require('../../customs/bookmarkCustoms').validateUrlPrefix
+const validateTitle = require('../../customs/bookmarkCustoms').validateTitle
 
 describe('bookmarkCustoms', () => {
   const validUrl = {
@@ -45,7 +45,7 @@ describe('bookmarkCustoms', () => {
       assert.throws(() => validateUrlShape(tooManyFieldsUrl))
     })
 
-    it('should throw an error if parameters name are wrong', () => {
+    it('should throw an error if parameters names are wrong', () => {
       const wrongParamUrl = {
         blip: 'www.lemonde.fr',
         prefix: 'http://',

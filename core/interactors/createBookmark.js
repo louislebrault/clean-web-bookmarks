@@ -1,6 +1,6 @@
-const Bookmark = require('../Entity/Bookmark')
-const validateUrl = require('../Customs/bookmarkCustoms').validateUrl
-const validateTitle = require('../Customs/bookmarkCustoms').validateTitle
+const Bookmark = require('../entities/bookmark')
+const validateUrl = require('../customs/bookmarkCustoms').validateUrl
+const validateTitle = require('../customs/bookmarkCustoms').validateTitle
 
 exports.createBookmark = async function (request, plug) {
     validateRequest(request)

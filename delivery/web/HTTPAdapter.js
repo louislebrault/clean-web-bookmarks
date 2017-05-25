@@ -1,7 +1,7 @@
 const fs = require('fs')
 
-const createBookmark = require('../../core/Interactor/createBookmark').createBookmark
-const loadBookmarks = require('../../core/Interactor/loadBookmarks').loadBookmarks
+const createBookmark = require('../../core/interactors/createBookmark').createBookmark
+const loadBookmarks = require('../../core/interactors/loadBookmarks').loadBookmarks
 
 const self = module.exports = {
   loadBookmarksHttpAdapter: async function(req, res, plug){

@@ -1,5 +1,5 @@
 const sinon = require ('sinon')
-const createBookmark = require ('../../Interactor/createBookmark').createBookmark
+const createBookmark = require ('../../interactors/createBookmark').createBookmark
 
 describe('createBookmark interactor', () => {
 
