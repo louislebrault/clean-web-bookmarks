@@ -4,6 +4,8 @@ const createBookmark = require('../../core/interactors/createBookmark').createBo
 const loadBookmarks = require('../../core/interactors/loadBookmarks').loadBookmarks
 const deleteBookmark = require('../../core/interactors/deleteBookmark').deleteBookmark
 
+const validateUrl = require('../../core/customs/bookmarkCustoms').validateUrl
+
 const self = module.exports = {
   loadBookmarksHttpAdapter: async function(req, res, plug) {
     try {
@@ -25,6 +27,7 @@ const self = module.exports = {
     try {
       let urlString = await extractPostData(req)
       let url = formatUrl(urlString)
+      validateUrl(url)
       let title = await requestTitle(url)
       let bookmark = await createBookmark({
         url,
