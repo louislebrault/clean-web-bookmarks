@@ -4,4 +4,4 @@ An example of clean architecture implementation
 
 ## Foreword
 
-This project is in working progress.
+This project is a work in progress.
