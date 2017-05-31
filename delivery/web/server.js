@@ -1,6 +1,7 @@
 const createBookmarkHttpAdapter = require('./HTTPAdapter').createBookmarkHttpAdapter
 const loadBookmarksHttpAdapter = require('./HTTPAdapter').loadBookmarksHttpAdapter
 const deleteBookmarkHttpAdapter = require('./HTTPAdapter').deleteBookmarkHttpAdapter
+const findBookmarksHttpAdapter = require('./HTTPAdapter').findBookmarksHttpAdapter
 const sendFileContent = require('./HTTPAdapter').sendFileContent
 
 const mongoPlug = require('../../external/mongo_plug')
@@ -16,23 +17,23 @@ app.on('request', async(req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*")
 
   if (req.method == "POST") {
-    if (req.url == "/add") {
-
-    }
-  }
-  switch(req.url){
-    case '/add':
+    switch(req.url){
+      case '/add':
         createBookmarkHttpAdapter(req, res, mongoPlug)
-      break
-    case '/delete':
+        break
+      case '/delete':
         deleteBookmarkHttpAdapter(req, res, mongoPlug)
-      break
+        break
+      case '/search':
+        findBookmarksHttpAdapter(req, res)
+        break
+    }
   }
 
   if (req.method == "GET") {
     switch (req.url) {
       case '/load':
-          loadBookmarksHttpAdapter(req, res, mongoPlug)
+        loadBookmarksHttpAdapter(req, res, mongoPlug)
         break
       case '/':
         sendFileContent(res, './public/index.html', 'text/html')

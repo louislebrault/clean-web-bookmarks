@@ -3,6 +3,7 @@ const fs = require('fs')
 const createBookmark = require('../../core/interactors/createBookmark').createBookmark
 const loadBookmarks = require('../../core/interactors/loadBookmarks').loadBookmarks
 const deleteBookmark = require('../../core/interactors/deleteBookmark').deleteBookmark
+const findBookmarks = require('../../core/interactors/findBookmarks').findBookmarks
 
 const validateUrl = require('../../core/customs/bookmarkCustoms').validateUrl
 
@@ -15,7 +16,7 @@ const self = module.exports = {
           'Content-Type': 'application/json'
         })
         res.write(JSON.stringify(bookmarks))
-      } else res.end()
+      }
     } catch (err) {
       console.log(err)
     } finally {
@@ -24,6 +25,8 @@ const self = module.exports = {
   },
 
   createBookmarkHttpAdapter: async function(req, res, plug) {
+    // Je veux que mon bookmark soit ajouté quoi qu'il arrive, meme
+    // si le serveur ne répond pas pour le titre
     try {
       let urlString = await extractPostData(req)
       let url = formatUrl(urlString)
@@ -49,6 +52,27 @@ const self = module.exports = {
     deleteBookmark(id, plug)
     res.writeHead(200)
     res.end()
+  },
+
+  findBookmarksHttpAdapter: async function(req, res, plug) {
+    try {
+      let postData = await extractPostData(req)
+      let jsonPostData = JSON.parse(postData)
+      let searchString = jsonPostData[0]
+      let bookmarks = jsonPostData[1]
+
+      let results = await findBookmarks({searchString, bookmarks})
+      if (results) {
+        res.writeHead(200, {
+          'Content-Type': 'application/json'
+        })
+        res.write(JSON.stringify(results))
+      }
+    } catch(e) {
+      console.log(e)
+    } finally {
+      res.end()
+    }
   },
 
   sendFileContent: function(res, fileName, contentType) {
