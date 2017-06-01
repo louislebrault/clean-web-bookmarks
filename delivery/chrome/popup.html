@@ -5,9 +5,16 @@
 
 
     <script src="popup.js"></script>
+    <style>
+      #titleContainer, #urlContainer{font-weight:bold}
+    </style>
   </head>
   <body>
-    <div id="title"></div>
-    <div id="url"></div>
+
+    <div>Do you wanna add this page to your bookmarks ?</div>
+    <div>Title : </div><div id="titleContainer"></div>
+    <div>URL : </div><div id="urlContainer"></div>
+    <button id="yesButton" autofocus>Yes</button>
+    <button id="noButton">No</button>
   </body>
 </html>

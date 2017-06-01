@@ -1,19 +1,30 @@
-console.log('TEEEEST')
-chrome.tabs.getCurrent(result => {
-  console.log(result)
+let url = '';
+let title = '';
+document.addEventListener('DOMContentLoaded', function() {
+  let yesButton = document.getElementById('yesButton')
+  let noButton = document.getElementById('noButton')
+  let urlContainer = document.getElementById('urlContainer')
+  let titleContainer = document.getElementById('titleContainer')
+  chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function(tabs){
+      url = tabs[0].url;
+      title = tabs[0].title;
+      urlContainer.innerHTML = url
+      titleContainer.innerHTML = title
+      yesButton.onclick = e => {
+        onYesButtonClick(e)
+      }
+      noButton.onclick = e => {
+        window.close()
+      }
+  })
 })
-// var title = document.getElementsByTagName("title")[0].innerHTML;
-// var location = window.location;
 
-// var divTitle = document.getElementsById('title')
-// var divUrl = document.getElementsById('url')
-
-
-
-// console.log(title, location)
-// document.addEventListener('DOMContentLoaded', function() {
-//   console.log('CHROME WEB BOOKMARKS')
-//   console.log(title, location)
-//   divTitle.innerHTML = title
-//   divUrl.innerHTML = divUrl
-// });
+function onYesButtonClick(e) {
+  let data = JSON.stringify({url, title})
+  if (url.length > 0){
+    let req = new XMLHttpRequest();
+    req.open('POST', 'http://localhost:8080/add', true);
+    req.send(data);
+    window.close()
+  }
+}

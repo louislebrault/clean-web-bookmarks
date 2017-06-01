@@ -1,2 +1,5 @@
 body {background-color:black;color:white}
 td {width: 200px;}
+td.favIcon {width: 30px;}
+td.title {width:450px;}
+td.url {width: 300px;}

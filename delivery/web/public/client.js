@@ -5,20 +5,6 @@ let searchButton = document.getElementById('searchButton')
 let searchInput = document.getElementById('searchInput')
 let resetButton = document.getElementById('resetButton')
 
-loadBookmarks()
-
-addButton.onclick = e => {
-  onAddButtonClick(e)
-}
-
-searchButton.onclick = e => {
-  onSearchButtonClick(e)
-}
-
-resetButton.onclick = e => {
-  onResetButtonClick(e)
-}
-
 function onAddButtonClick(e) {
   let req = new XMLHttpRequest();
   req.onloadend = e => {
@@ -27,8 +13,10 @@ function onAddButtonClick(e) {
     prependHTML(html)
   }
   req.open('POST', 'http://localhost:8080/add', true);
-  let val = addInput.value
-  req.send(val);
+  let data = JSON.stringify({
+    url: addInput.value
+  })
+  req.send(data);
 }
 
 function onSearchButtonClick(e) {
@@ -43,22 +31,12 @@ function onSearchButtonClick(e) {
   req.send(searchInput.value);
 }
 
-function emptyContainer(){
-  container.innerHTML = ''
-}
-
-function onResetButtonClick(e){
+function onResetButtonClick(e) {
   emptyContainer()
   loadBookmarks()
 }
 
-function displayBookmarks(bookmarks){
-  for (let i = 0; i < bookmarks.length; i++){
-    prependHTML(bookmarkToHTML(bookmarks[i]))
-  }
-}
-
-function loadBookmarks(){
+function loadBookmarks() {
   let req = new XMLHttpRequest()
   req.onloadend = e => {
     bookmarks = JSON.parse(req.response)
@@ -69,8 +47,7 @@ function loadBookmarks(){
   req.send();
 }
 
-
-function deleteBookmark(id){
+function deleteBookmark(id) {
   document.getElementById(id).remove()
   let req = new XMLHttpRequest()
   req.onloadend = e => {
@@ -80,9 +57,86 @@ function deleteBookmark(id){
   req.send(id);
 }
 
-function initDeleteButtons(){
+function emptyContainer() {
+  container.innerHTML = ''
+}
+
+
+
+function displayBookmarks(bookmarks) {
+  for (let i = 0; i < bookmarks.length; i++) {
+    prependHTML(bookmarkToHTML(bookmarks[i]))
+  }
+}
+
+
+function bookmarkToHTML(bookmark) {
+  let html = '<tr class="bookmark" id="' + bookmark.id + '">' +
+    '<td class="favIcon"><img src="' + bookmark.favIcon + '"></td>' +
+    '<td class="title">' + constrainTitleLength(bookmark.title) + '</td>' +
+    '<td class="url"><a href="' + bookmark.url.prefix + bookmark.url.path + '">' +
+    constrainUrlLength(bookmark.url) + '</a></td>' +
+    '<td>' + formatDateString(bookmark.date) + '</td>' +
+    '<td><button class="deleteButton">Delete</button></td>' +
+    '</a></tr>'
+  return html
+}
+
+function formatDateString(date) {
+  let DateObject = new Date(date)
+  let day = addZeroUnderTen(DateObject.getDay())
+  let month = addZeroUnderTen(DateObject.getMonth())
+  let year = addZeroUnderTen(DateObject.getFullYear())
+  let hours = addZeroUnderTen(DateObject.getHours())
+  let minutes = addZeroUnderTen(DateObject.getMinutes())
+  let newDate = day + '/' + month + '/' + year + ' ' + hours + ':' + minutes
+
+  return newDate
+}
+
+function constrainUrlLength(url) {
+  let stringUrl = url.prefix + url.path
+  let urlLength = stringUrl.length
+  let maxLength = 30
+  if (urlLength > maxLength) {
+    let urlChunks = []
+    urlChunks.push(stringUrl.substring(0, maxLength / 2))
+    urlChunks.push(stringUrl.substring(urlLength - maxLength / 2))
+    let newStringUrl = urlChunks[0] + '...' + urlChunks[1]
+    return newStringUrl
+  } else {
+    return stringUrl
+  }
+}
+
+function constrainTitleLength(title) {
+  let titleLength = title.length
+  let maxLength = 60
+  if (titleLength > maxLength) {
+    let newTitle = title.slice(0, maxLength) + '...'
+    return newTitle
+  } else return title
+}
+
+function prependHTML(res) {
+  container.innerHTML = res + container.innerHTML
+  // pas terrible de reinit tous les boutons a chaque fois qu'on ajoute un bookmark
+  initDeleteButtons()
+}
+
+function findContainerId(el, cls) {
+  while ((el = el.parentElement) && !el.classList.contains(cls));
+  return el.id
+}
+
+function addZeroUnderTen(value) {
+  if (value < 10) return '0' + value
+  else return value
+}
+
+function initDeleteButtons() {
   let deleteButtons = document.getElementsByClassName('deleteButton')
-  for(let i=0; i < deleteButtons.length; i++){
+  for (let i = 0; i < deleteButtons.length; i++) {
     let id = findContainerId(deleteButtons[i], 'bookmark')
     deleteButtons[i].onclick = e => {
       deleteBookmark(id)
@@ -90,26 +144,16 @@ function initDeleteButtons(){
   }
 }
 
-// Va chercher le parent le plus proche avec une classe donnée et renvoit son id
-function findContainerId(el, cls){
-  while((el = el.parentElement) && !el.classList.contains(cls));
-  return el.id
+loadBookmarks()
+
+addButton.onclick = e => {
+  onAddButtonClick(e)
 }
 
-function bookmarkToHTML(bookmark){
-  let html = '<tr class="bookmark" id="' + bookmark.id + '">'+
-  '<td><img src="' + bookmark.favIcon + '"></td>' +
-    '<td><a href="' + bookmark.url.prefix + bookmark.url.path +'">' +
-    bookmark.url.prefix + bookmark.url.path + '</a></td>' +
-    '<td>' + bookmark.title + '</td>' +
-    '<td>' + bookmark.date + '</td>' +
-    '<td><button class="deleteButton">Delete</button></td>' +
-  '</a></tr>'
-  return html
+searchButton.onclick = e => {
+  onSearchButtonClick(e)
 }
 
-function prependHTML(res){
-  container.innerHTML = res + container.innerHTML
-  // pas terrible de reinit tous les boutons a chaque fois qu'on ajoute un bookmark
-  initDeleteButtons()
+resetButton.onclick = e => {
+  onResetButtonClick(e)
 }

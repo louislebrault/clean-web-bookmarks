@@ -1,11 +1,17 @@
 const fs = require('fs')
 
-const createBookmark = require('../../core/interactors/createBookmark').createBookmark
-const loadBookmarks = require('../../core/interactors/loadBookmarks').loadBookmarks
-const deleteBookmark = require('../../core/interactors/deleteBookmark').deleteBookmark
-const findBookmarks = require('../../core/interactors/findBookmarks').findBookmarks
+const createBookmark = require('../../core/interactors/createBookmark')
+  .createBookmark
+const loadBookmarks = require('../../core/interactors/loadBookmarks')
+  .loadBookmarks
+const deleteBookmark = require('../../core/interactors/deleteBookmark')
+  .deleteBookmark
+const findBookmarks = require('../../core/interactors/findBookmarks')
+  .findBookmarks
 
-const validateUrl = require('../../core/customs/bookmarkCustoms').validateUrl
+const createBookmarkCustoms = require('./HTTPAdapterCustoms')
+  .createBookmarkHttpAdapterCustoms
+
 
 const self = module.exports = {
   loadBookmarksHttpAdapter: async function(req, res, plug) {
@@ -25,53 +31,56 @@ const self = module.exports = {
   },
 
   createBookmarkHttpAdapter: async function(req, res, plug) {
-    // Je veux que mon bookmark soit ajouté quoi qu'il arrive, meme
-    // si le serveur ne répond pas pour le titre
-    try {
-      let urlString = await extractPostData(req)
-      let url = formatUrl(urlString)
-      console.log(url)
-      validateUrl(url)
-      let title = await requestTitle(url)
-      let bookmark = await createBookmark({
-        url,
-        title
-      }, plug)
-      res.writeHead(200, {
-        'Content-Type': 'application/json'
-      })
-      res.write(JSON.stringify(bookmark))
-    } catch (err) {
-      console.log('chatte')
-      console.log(err)
-    } finally {
-      res.end()
-    }
-  },
-
-  deleteBookmarkHttpAdapter: async function(req, res, plug) {
-    let id = await extractPostData(req)
-    deleteBookmark(id, plug)
-    res.writeHead(200)
-    res.end()
-  },
-
-  findBookmarksHttpAdapter: async function(req, res, plug) {
-    try {
-      let searchString = await extractPostData(req)
-
-      let results = await findBookmarks(searchString, plug)
-      if (results) {
+      try {
+        let postData = await extractPostData(req)
+        postData = createBookmarkCustoms('incoming', postData)
+        console.log(postData)
+        let url = formatUrl(postData.url)
+        let title = postData.title ? postData.title : await requestTitle(url)
+        let bookmark = await createBookmark({
+          url,
+          title
+        }, plug)
         res.writeHead(200, {
           'Content-Type': 'application/json'
         })
-        res.write(JSON.stringify(results))
+        res.write(JSON.stringify(bookmark))
+      } catch (err) {
+        console.log(err)
+      } finally {
+        res.end()
       }
-    } catch(e) {
-      console.log(e)
-    } finally {
-      res.end()
-    }
+  },
+
+  deleteBookmarkHttpAdapter: async function(req, res, plug) {
+      try {
+        let id = await extractPostData(req)
+
+        deleteBookmark(id, plug)
+        res.writeHead(200)
+      } catch (err) {
+        console.log(err)
+      } finally {
+        res.end()
+      }
+  },
+
+  findBookmarksHttpAdapter: async function(req, res, plug) {
+      try {
+        let searchString = await extractPostData(req)
+
+        let results = await findBookmarks(searchString, plug)
+        if (results) {
+          res.writeHead(200, {
+            'Content-Type': 'application/json'
+          })
+          res.write(JSON.stringify(results))
+        }
+      } catch(e) {
+        console.log(e)
+      } finally {
+        res.end()
+      }
   },
 
   sendFileContent: function(res, fileName, contentType) {
@@ -91,7 +100,6 @@ const self = module.exports = {
   },
 }
 
-
 function extractPostData(req) {
   let body = ''
   return new Promise(s => {
@@ -109,8 +117,7 @@ function formatUrl(url) {
   let prefix = null
   let path = null
   let divider = '://'
-  let prefixIndex = url.indexOf('://')
-  console.log(prefixIndex)
+  let prefixIndex = url.indexOf(divider)
   if (prefixIndex > -1) {
     prefixIndex += divider.length
     prefix = url.slice(0, prefixIndex)
