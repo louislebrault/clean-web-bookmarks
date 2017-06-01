@@ -25,7 +25,7 @@ app.on('request', async(req, res) => {
         deleteBookmarkHttpAdapter(req, res, mongoPlug)
         break
       case '/search':
-        findBookmarksHttpAdapter(req, res)
+        findBookmarksHttpAdapter(req, res, mongoPlug)
         break
     }
   }

@@ -30,6 +30,7 @@ const self = module.exports = {
     try {
       let urlString = await extractPostData(req)
       let url = formatUrl(urlString)
+      console.log(url)
       validateUrl(url)
       let title = await requestTitle(url)
       let bookmark = await createBookmark({
@@ -41,6 +42,7 @@ const self = module.exports = {
       })
       res.write(JSON.stringify(bookmark))
     } catch (err) {
+      console.log('chatte')
       console.log(err)
     } finally {
       res.end()
@@ -56,12 +58,9 @@ const self = module.exports = {
 
   findBookmarksHttpAdapter: async function(req, res, plug) {
     try {
-      let postData = await extractPostData(req)
-      let jsonPostData = JSON.parse(postData)
-      let searchString = jsonPostData[0]
-      let bookmarks = jsonPostData[1]
+      let searchString = await extractPostData(req)
 
-      let results = await findBookmarks({searchString, bookmarks})
+      let results = await findBookmarks(searchString, plug)
       if (results) {
         res.writeHead(200, {
           'Content-Type': 'application/json'
@@ -108,12 +107,20 @@ function extractPostData(req) {
 
 function formatUrl(url) {
   let prefix = null
-  let prefixIndex = url.lastIndexOf('://')
+  let path = null
+  let divider = '://'
+  let prefixIndex = url.indexOf('://')
+  console.log(prefixIndex)
   if (prefixIndex > -1) {
-    prefix = url.slice(prefixIndex)
-  } else prefix = 'http://'
+    prefixIndex += divider.length
+    prefix = url.slice(0, prefixIndex)
+    path = url.slice(prefixIndex)
+  } else {
+    prefix = 'http://'
+    path = url
+  }
   return {
-    path: url,
+    path,
     prefix
   }
 }
@@ -125,7 +132,9 @@ function requestTitle(url) {
       let title = await findTitleInResponse(res)
       s(title)
     } catch (e) {
-      f(e)
+      // We failed to request Url but we want to continue to create bookmarks
+      // so we send a success
+      s('')
     }
   })
 }
@@ -148,6 +157,9 @@ function findTitleInResponse(res) {
   const findTitleRegExp = "<title>(.*?)</title>"
   const findTitle = new RegExp(findTitleRegExp, "i")
   return new Promise((s, f) => {
+    setTimeout(() => {
+      f('Didnt find title in time')
+    }, 3000)
     res.setEncoding('utf8')
     res.on('data', (chunk) => {
       let str = chunk.toString()

@@ -7,10 +7,12 @@ const url = 'mongodb://localhost:27017/clean-web-bookmarks'
 
 let MongoPlug = {
   db: null,
-  connectDB: () => {
+  bookmarks: null,
+  connectDB: function() {
       MongoClient.connect(url, (err, db) => {
         try {
           MongoPlug.db = db
+          MongoPlug.bookmarks = MongoPlug.db.collection('bookmarks')
           assert.equal(null, err);
           console.log("Connected successfully to mongo db");
         } catch(e){
@@ -19,10 +21,9 @@ let MongoPlug = {
       })
   },
 
-  createBookmark: (bookmark) => {
-    let collection = MongoPlug.db.collection('bookmarks');
+  createBookmark: function(bookmark) {
     return new Promise ((s,f) => {
-      collection.insert(bookmark, (err, result) => {
+      MongoPlug.bookmarks.insert(bookmark, (err, result) => {
         assert.equal(err, null);
         console.log("Inserted a bookmark into the collection");
         s(result.insertedIds[0])
@@ -30,12 +31,11 @@ let MongoPlug = {
     })
   },
 
-  loadBookmarks: () => {
-    let collection = MongoPlug.db.collection('bookmarks');
+  loadBookmarks: function() {
     return new Promise ((s,f) => {
-      collection.find().toArray(function(err, docs) {
+      MongoPlug.bookmarks.find().toArray((err, docs) => {
         if (err) {
-          f(null)
+          f('Error on loadBookmarks')
         }
         console.log("Found records");
         const bookmarks = formatFromPlugToApp(docs)
@@ -44,16 +44,27 @@ let MongoPlug = {
     })
   },
 
-  deleteBookmark: (id) => {
-    let collection = MongoPlug.db.collection('bookmarks');
+  deleteBookmark: function(id) {
     let objectId = new mongo.ObjectID(id)
-    collection.findAndRemove({_id:objectId}).then((v) => {
+    MongoPlug.bookmarks.findAndRemove({_id:objectId}).then((v) => {
       console.log('Bookmark removed', v)
+    })
+  },
+
+  findBookmarks: function(searchString){
+    let regex = new RegExp(searchString, 'i')
+    let query = { $or: [{'url.path': regex}, {title: regex}] }
+    return new Promise ((s, f) => {
+      MongoPlug.bookmarks.find(query).toArray((err, docs) => {
+        if (err) f('Error on findBookmarks')
+        s(docs)
+      })
     })
   }
 }
 
 function formatFromPlugToApp(data){
+  // Est ce non optimal de faire ceci ? Y'a t il un meilleur moyen ?
   let newBookmarks = []
   for(var ii = 0; ii < data.length; ii++){
     let newBookmark = {

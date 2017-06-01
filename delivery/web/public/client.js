@@ -5,8 +5,6 @@ let searchButton = document.getElementById('searchButton')
 let searchInput = document.getElementById('searchInput')
 let resetButton = document.getElementById('resetButton')
 
-let userBookmarks = []
-
 loadBookmarks()
 
 addButton.onclick = e => {
@@ -25,7 +23,6 @@ function onAddButtonClick(e) {
   let req = new XMLHttpRequest();
   req.onloadend = e => {
     let bookmark = JSON.parse(req.response)
-    userBookmarks.push(bookmark)
     html = bookmarkToHTML(bookmark)
     prependHTML(html)
   }
@@ -43,9 +40,7 @@ function onSearchButtonClick(e) {
     displayBookmarks(bookmarks)
   }
   req.open('POST', 'http://localhost:8080/search', true);
-  let inputValue = searchInput.value
-  let dataToSend = JSON.stringify([inputValue, userBookmarks])
-  req.send(dataToSend);
+  req.send(searchInput.value);
 }
 
 function emptyContainer(){
@@ -54,7 +49,7 @@ function emptyContainer(){
 
 function onResetButtonClick(e){
   emptyContainer()
-  displayBookmarks(bookmarks)
+  loadBookmarks()
 }
 
 function displayBookmarks(bookmarks){
@@ -69,24 +64,14 @@ function loadBookmarks(){
     bookmarks = JSON.parse(req.response)
     displayBookmarks(bookmarks)
     initDeleteButtons()
-    userBookmarks = bookmarks
   }
   req.open('GET', 'http://localhost:8080/load', true);
   req.send();
 }
 
+
 function deleteBookmark(id){
   document.getElementById(id).remove()
-  for (let ii = 0 ; ii < userBookmarks.length ; ii++){
-    let bookmark = userBookmarks[ii]
-    if (bookmark.id === id) {
-      console.log(userBookmarks)
-      userBookmarks.splice(ii, 1)
-      console.log(userBookmarks)
-      ii--
-    }
-  }
-  console.log(userBookmarks)
   let req = new XMLHttpRequest()
   req.onloadend = e => {
     console.log(id + ' deleted correctly')
@@ -114,7 +99,8 @@ function findContainerId(el, cls){
 function bookmarkToHTML(bookmark){
   let html = '<tr class="bookmark" id="' + bookmark.id + '">'+
   '<td><img src="' + bookmark.favIcon + '"></td>' +
-    '<td><a href="' + bookmark.url.prefix + bookmark.url.path +'">' + bookmark.url.path + '</a></td>' +
+    '<td><a href="' + bookmark.url.prefix + bookmark.url.path +'">' +
+    bookmark.url.prefix + bookmark.url.path + '</a></td>' +
     '<td>' + bookmark.title + '</td>' +
     '<td>' + bookmark.date + '</td>' +
     '<td><button class="deleteButton">Delete</button></td>' +
