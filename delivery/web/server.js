@@ -19,6 +19,7 @@ app.on('request', async(req, res) => {
   if (req.method == "POST") {
     switch(req.url){
       case '/add':
+        console.log('request on /add')
         createBookmarkHttpAdapter(req, res, mongoPlug)
         break
       case '/delete':

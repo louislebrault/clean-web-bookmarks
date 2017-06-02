@@ -24,7 +24,7 @@ const self = module.exports = {
         res.write(JSON.stringify(bookmarks))
       }
     } catch (err) {
-      console.log(err)
+      sendError(res, err)
     } finally {
       res.end()
     }
@@ -46,7 +46,7 @@ const self = module.exports = {
         })
         res.write(JSON.stringify(bookmark))
       } catch (err) {
-        console.log(err)
+        sendError(res, err)
       } finally {
         res.end()
       }
@@ -59,7 +59,7 @@ const self = module.exports = {
         deleteBookmark(id, plug)
         res.writeHead(200)
       } catch (err) {
-        console.log(err)
+        sendError(res, err)
       } finally {
         res.end()
       }
@@ -77,7 +77,7 @@ const self = module.exports = {
           res.write(JSON.stringify(results))
         }
       } catch(e) {
-        console.log(e)
+        sendError(res, err)
       } finally {
         res.end()
       }
@@ -98,6 +98,12 @@ const self = module.exports = {
       }
     })
   },
+}
+
+function sendError(res, err){
+  console.log(err)
+  res.writeHead(500)
+  res.write(err)
 }
 
 function extractPostData(req) {
