@@ -16,7 +16,8 @@ const createBookmarkCustoms = require('./HTTPAdapterCustoms')
 const self = module.exports = {
   loadBookmarksHttpAdapter: async function(req, res, plug) {
     try {
-      let bookmarks = await loadBookmarks(plug)
+      let page = await extractPostData(req)
+      let bookmarks = await loadBookmarks(page, plug)
       if (bookmarks) {
         res.writeHead(200, {
           'Content-Type': 'application/json'

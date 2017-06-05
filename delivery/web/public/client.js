@@ -36,7 +36,7 @@ function onResetButtonClick(e) {
   loadBookmarks()
 }
 
-function loadBookmarks() {
+function loadBookmarks(page) {
   let req = new XMLHttpRequest()
   req.onloadend = e => {
     bookmarks = JSON.parse(req.response)
@@ -44,7 +44,7 @@ function loadBookmarks() {
     initDeleteButtons()
   }
   req.open('GET', 'http://localhost:8080/load', true);
-  req.send();
+  req.send(page);
 }
 
 function deleteBookmark(id) {
@@ -74,8 +74,8 @@ function bookmarkToHTML(bookmark) {
   let html = '<tr class="bookmark" id="' + bookmark.id + '">' +
     '<td class="favIcon"><img src="' + bookmark.favIcon + '"></td>' +
     '<td class="title">' + constrainTitleLength(bookmark.title) + '</td>' +
-    '<td class="url"><a href="' + bookmark.url.prefix + bookmark.url.path + '">' +
-    constrainUrlLength(bookmark.url) + '</a></td>' +
+    '<td class="url"><a target="_blank" href="' + bookmark.url.prefix +
+    bookmark.url.path + '">' + constrainUrlLength(bookmark.url) + '</a></td>' +
     '<td>' + formatDateString(bookmark.date) + '</td>' +
     '<td><button class="deleteButton">Delete</button></td>' +
     '</a></tr>'
@@ -144,7 +144,7 @@ function initDeleteButtons() {
   }
 }
 
-loadBookmarks()
+loadBookmarks(0)
 
 addButton.onclick = e => {
   onAddButtonClick(e)

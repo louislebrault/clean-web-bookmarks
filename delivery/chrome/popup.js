@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', function() {
     'active': true,
     'lastFocusedWindow': true
   }, function(tabs) {
-    url = tabs[0].url;
-    title = tabs[0].title;
+    url = tabs[0].url
+    title = tabs[0].title
     urlContainer.innerHTML = url
     titleContainer.innerHTML = title
     yesButton.onclick = e => {
