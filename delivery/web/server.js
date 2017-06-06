@@ -14,12 +14,12 @@ app.listen(8080)
 mongoPlug.connectDB()
 
 app.on('request', async(req, res) => {
+  // dev only -- control access has to be changed on production
   res.setHeader("Access-Control-Allow-Origin", "*")
 
   if (req.method == "POST") {
     switch(req.url){
       case '/add':
-        console.log('request on /add')
         createBookmarkHttpAdapter(req, res, mongoPlug)
         break
       case '/delete':

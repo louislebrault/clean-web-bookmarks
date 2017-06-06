@@ -47,8 +47,8 @@ function createBookmarkHttpAdapterCustoms(action, data){
 function deteBookmarkHttpAdapterCustoms(action, data){
   switch(action){
     case 'incoming':
-    // Si toutes les infos qui viennent d'un POST sont sous la forme d'un string,
-    // comment savoir si c'est un vrai string ou un string genre json ?
+    // Find a way to detect if the string from post request is a regular string
+    // or a json stringified
       break
 
     case 'outgoing':

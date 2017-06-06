@@ -1,3 +1,5 @@
+// We probably should inject interactors in adapters arguments here
+
 const fs = require('fs')
 
 const createBookmark = require('../../core/interactors/createBookmark')

@@ -1,21 +1,29 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Clean Web Bookmarks Chrome Extension</title>
+
+<head>
+  <title>Clean Web Bookmarks Chrome Extension</title>
 
 
-    <script src="popup.js"></script>
-    <style>
-      #titleContainer, #urlContainer{font-weight:bold}
-    </style>
-  </head>
-  <body>
+  <script src="popup.js"></script>
+  <style>
+    #titleContainer,
+    #urlContainer {
+      font-weight: bold
+    }
+  </style>
+</head>
 
-    <div>Do you wanna add this page to your bookmarks ?</div>
-    <div>Title : </div><div id="titleContainer"></div>
-    <div>URL : </div><div id="urlContainer"></div>
-    <button id="yesButton" autofocus>Yes</button>
-    <button id="noButton">No</button>
-    <div id="infoContainer"></div>
-  </body>
+<body>
+
+  <div>Do you wanna add this page to your bookmarks ?</div>
+  <div>Title : </div>
+  <div id="titleContainer"></div>
+  <div>URL : </div>
+  <div id="urlContainer"></div>
+  <button id="yesButton" autofocus>Yes</button>
+  <button id="noButton">No</button>
+  <div id="infoContainer"></div>
+</body>
+
 </html>

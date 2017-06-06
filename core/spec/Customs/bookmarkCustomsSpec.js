@@ -1,3 +1,6 @@
+// =====> THIS FILE IS OUTDATED <======
+// Have to take time to write/rewrite all units tests, IMPORTANT !
+
 const assert = require('assert')
 
 const validateUrl = require('../../customs/bookmarkCustoms').validateUrl

@@ -120,7 +120,7 @@ function constrainTitleLength(title) {
 
 function prependHTML(res) {
   container.innerHTML = res + container.innerHTML
-  // pas terrible de reinit tous les boutons a chaque fois qu'on ajoute un bookmark
+  // bad practice to init all buttons here, need improvements
   initDeleteButtons()
 }
 

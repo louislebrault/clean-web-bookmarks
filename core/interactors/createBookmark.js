@@ -2,7 +2,7 @@ const Bookmark = require('../entities/bookmark')
 
 const validateRequest = require('../customs/CreateBookmarkCustoms')
   .validateRequest
-
+  
 const validatePlug = require('../customs/CreateBookmarkCustoms')
   .validatePlug
 
