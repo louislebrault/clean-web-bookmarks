@@ -19,6 +19,7 @@ const self = module.exports = {
   loadBookmarksHttpAdapter: async function(req, res, plug) {
     try {
       let page = await extractPostData(req)
+      console.log('page adapter', page)
       let bookmarks = await loadBookmarks(page, plug)
       if (bookmarks) {
         res.writeHead(200, {

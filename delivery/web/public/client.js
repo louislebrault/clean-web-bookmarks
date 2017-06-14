@@ -38,13 +38,16 @@ function onResetButtonClick(e) {
 
 function loadBookmarks(page) {
   let req = new XMLHttpRequest()
-  req.onloadend = e => {
-    bookmarks = JSON.parse(req.response)
-    displayBookmarks(bookmarks)
-    initDeleteButtons()
-  }
-  req.open('GET', 'http://localhost:8080/load', true);
+  req.open('POST', 'http://localhost:8080/load', true);
   req.send(page);
+  return new Promise((s,f) => {
+    req.onloadend = e => {
+      bookmarks = JSON.parse(req.response)
+      displayBookmarks(bookmarks)
+      initDeleteButtons()
+      s(bookmarks)
+    }
+  })
 }
 
 function deleteBookmark(id) {
@@ -65,7 +68,7 @@ function emptyContainer() {
 
 function displayBookmarks(bookmarks) {
   for (let i = 0; i < bookmarks.length; i++) {
-    prependHTML(bookmarkToHTML(bookmarks[i]))
+    appendHTML(bookmarkToHTML(bookmarks[i]))
   }
 }
 
@@ -124,6 +127,12 @@ function prependHTML(res) {
   initDeleteButtons()
 }
 
+function appendHTML(res) {
+  container.innerHTML += res
+  // bad practice to init all buttons here, need improvements
+  initDeleteButtons()
+}
+
 function findContainerId(el, cls) {
   while ((el = el.parentElement) && !el.classList.contains(cls));
   return el.id
@@ -144,7 +153,35 @@ function initDeleteButtons() {
   }
 }
 
-loadBookmarks(0)
+function fillContainer(page){
+  let scrollHeight = document.body.scrollHeight
+  let clientHeight = document.body.clientHeight
+  // got an error using let instead of var here
+  var page = page || 0
+  loadBookmarks(page).then((bookmarks) => {
+    if (scrollHeight >= clientHeight && bookmarks.length >= 30) {
+      fillContainer(page + 1)
+    }
+  })
+}
+
+// trying injection dependencies
+function fillContainer2({
+  page = 0,
+  scrollHeight = document.body.scrollHeight,
+  clientHeight = document.body.clientHeight,
+  loadBookmarks = this.loadBookmarks
+}){
+  loadBookmarks(page).then((bookmarks) => {
+    if (scrollHeight >= clientHeight && bookmarks.length >= 30) {
+      fillContainer2({
+        page: page + 1
+      })
+    }
+  })
+}
+
+fillContainer2({})
 
 addButton.onclick = e => {
   onAddButtonClick(e)
@@ -156,4 +193,8 @@ searchButton.onclick = e => {
 
 resetButton.onclick = e => {
   onResetButtonClick(e)
+}
+
+module.exports = {
+  fillContainer2
 }

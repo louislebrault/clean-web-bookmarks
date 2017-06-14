@@ -19,6 +19,9 @@ app.on('request', async(req, res) => {
 
   if (req.method == "POST") {
     switch(req.url){
+      case '/load':
+        loadBookmarksHttpAdapter(req, res, mongoPlug)
+        break
       case '/add':
         createBookmarkHttpAdapter(req, res, mongoPlug)
         break
@@ -33,9 +36,6 @@ app.on('request', async(req, res) => {
 
   if (req.method == "GET") {
     switch (req.url) {
-      case '/load':
-        loadBookmarksHttpAdapter(req, res, mongoPlug)
-        break
       case '/':
         sendFileContent(res, './public/index.html', 'text/html')
         break
