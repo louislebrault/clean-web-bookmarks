@@ -57,7 +57,9 @@ let MongoPlug = {
     })
   },
 
-  findBookmarks: function(searchString) {
+  findBookmarks: function(page, searchString) {
+    let limit = 30
+    let skip = page * limit
     let regex = new RegExp(searchString, 'i')
     let query = {
       $or: [{
@@ -67,7 +69,8 @@ let MongoPlug = {
       }]
     }
     return new Promise((s, f) => {
-      MongoPlug.bookmarks.find(query).toArray((err, docs) => {
+      MongoPlug.bookmarks.find(query).skip(skip).limit(limit).
+      toArray((err, docs) => {
         if (err) f('Error on findBookmarks')
         s(docs)
       })

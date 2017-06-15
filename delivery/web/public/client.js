@@ -19,7 +19,8 @@ function onAddButtonClick(e) {
   req.send(data);
 }
 
-function onSearchButtonClick(e) {
+function onSearchButtonClick(page) {
+  isAllBookmarksLoaded = false
   let req = new XMLHttpRequest();
   req.onloadend = e => {
     let bookmarks = JSON.parse(req.response)
@@ -28,7 +29,8 @@ function onSearchButtonClick(e) {
     displayBookmarks(bookmarks)
   }
   req.open('POST', 'http://localhost:8080/search', true);
-  req.send(searchInput.value);
+  let data = JSON.stringify({page, searchString: searchInput.value})
+  req.send(data);
 }
 
 function onResetButtonClick(e) {
@@ -40,12 +42,19 @@ function loadBookmarks(page) {
   let req = new XMLHttpRequest()
   req.open('POST', 'http://localhost:8080/load', true);
   req.send(page);
-  return new Promise((s,f) => {
+  return new Promise((s, f) => {
     req.onloadend = e => {
-      bookmarks = JSON.parse(req.response)
-      displayBookmarks(bookmarks)
-      initDeleteButtons()
-      s(bookmarks)
+      if (req.response) {
+        bookmarks = JSON.parse(req.response)
+        displayBookmarks(bookmarks)
+        initDeleteButtons()
+        nextPage = page + 1
+        s(bookmarks)
+      }
+      else {
+        isAllBookmarksLoaded = true
+        s()
+      }
     }
   })
 }
@@ -153,48 +162,59 @@ function initDeleteButtons() {
   }
 }
 
-function fillContainer(page){
-  let scrollHeight = document.body.scrollHeight
-  let clientHeight = document.body.clientHeight
-  // got an error using let instead of var here
-  var page = page || 0
-  loadBookmarks(page).then((bookmarks) => {
-    if (scrollHeight >= clientHeight && bookmarks.length >= 30) {
-      fillContainer(page + 1)
-    }
-  })
-}
 
 // trying injection dependencies
-function fillContainer2({
+// do injection depencies make sens in the context of a function that
+// interact with the document ? Look hard to unit test
+function fillContainer({
   page = 0,
   scrollHeight = document.body.scrollHeight,
   clientHeight = document.body.clientHeight,
   loadBookmarks = this.loadBookmarks
-}){
+}) {
+  isAllBookmarksLoaded = false
   loadBookmarks(page).then((bookmarks) => {
     if (scrollHeight >= clientHeight && bookmarks.length >= 30) {
-      fillContainer2({
+      fillContainer({
         page: page + 1
       })
     }
   })
 }
 
-fillContainer2({})
+function onContainerScroll({
+  page,
+  loadBookmarks = this.loadBookmarks
+}) {
+  // if document is scrolled to the bottom of the page, minus a margin
+  if (!isAllBookmarksLoaded) {
+    if (document.body.clientHeight + window.scrollY >=
+      document.body.scrollHeight - document.body.clientHeight / 4) {
+      loadBookmarks(page)
+    }
+  }
+}
+
+let isAllBookmarksLoaded = false
+let nextPage = null
+
+fillContainer({})
+
+
+document.onscroll = e => {
+  onContainerScroll({
+    page: nextPage
+  })
+}
 
 addButton.onclick = e => {
   onAddButtonClick(e)
 }
 
 searchButton.onclick = e => {
-  onSearchButtonClick(e)
+  onSearchButtonClick(0)
 }
 
 resetButton.onclick = e => {
   onResetButtonClick(e)
-}
-
-module.exports = {
-  fillContainer2
 }

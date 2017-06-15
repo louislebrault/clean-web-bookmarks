@@ -19,7 +19,6 @@ const self = module.exports = {
   loadBookmarksHttpAdapter: async function(req, res, plug) {
     try {
       let page = await extractPostData(req)
-      console.log('page adapter', page)
       let bookmarks = await loadBookmarks(page, plug)
       if (bookmarks) {
         res.writeHead(200, {
@@ -35,56 +34,59 @@ const self = module.exports = {
   },
 
   createBookmarkHttpAdapter: async function(req, res, plug) {
-      try {
-        let postData = await extractPostData(req)
-        postData = createBookmarkCustoms('incoming', postData)
-        console.log(postData)
-        let url = formatUrl(postData.url)
-        let title = postData.title ? postData.title : await requestTitle(url)
-        let bookmark = await createBookmark({
-          url,
-          title
-        }, plug)
-        res.writeHead(200, {
-          'Content-Type': 'application/json'
-        })
-        res.write(JSON.stringify(bookmark))
-      } catch (err) {
-        sendError(res, err)
-      } finally {
-        res.end()
-      }
+    try {
+      let postData = await extractPostData(req)
+      postData = createBookmarkCustoms('incoming', postData)
+      let url = formatUrl(postData.url)
+      let title = postData.title ? postData.title : await requestTitle(url)
+      let bookmark = await createBookmark({
+        url,
+        title
+      }, plug)
+      res.writeHead(200, {
+        'Content-Type': 'application/json'
+      })
+      res.write(JSON.stringify(bookmark))
+    } catch (err) {
+      sendError(res, err)
+    } finally {
+      res.end()
+    }
   },
 
   deleteBookmarkHttpAdapter: async function(req, res, plug) {
-      try {
-        let id = await extractPostData(req)
+    try {
+      let id = await extractPostData(req)
 
-        deleteBookmark(id, plug)
-        res.writeHead(200)
-      } catch (err) {
-        sendError(res, err)
-      } finally {
-        res.end()
-      }
+      deleteBookmark(id, plug)
+      res.writeHead(200)
+    } catch (err) {
+      sendError(res, err)
+    } finally {
+      res.end()
+    }
   },
 
   findBookmarksHttpAdapter: async function(req, res, plug) {
-      try {
-        let searchString = await extractPostData(req)
-
-        let results = await findBookmarks(searchString, plug)
-        if (results) {
-          res.writeHead(200, {
-            'Content-Type': 'application/json'
-          })
-          res.write(JSON.stringify(results))
-        }
-      } catch(e) {
-        sendError(res, err)
-      } finally {
-        res.end()
+    try {
+      let postData = await extractPostData(req)
+      postData = JSON.parse(postData)
+      console.log('postData', postData)
+      let results = await findBookmarks({
+        page: postData.page,
+        searchString: postData.searchString
+      }, plug)
+      if (results) {
+        res.writeHead(200, {
+          'Content-Type': 'application/json'
+        })
+        res.write(JSON.stringify(results))
       }
+    } catch (e) {
+      sendError(res, err)
+    } finally {
+      res.end()
+    }
   },
 
   sendFileContent: function(res, fileName, contentType) {
@@ -104,7 +106,7 @@ const self = module.exports = {
   },
 }
 
-function sendError(res, err){
+function sendError(res, err) {
   console.log(err)
   res.writeHead(500)
   res.write(err)
