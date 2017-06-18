@@ -2,13 +2,13 @@
 
 const fs = require('fs')
 
-const createBookmark = require('../../core/interactors/createBookmark')
+const createBookmark = require('../../core/bookmark/interactors/createBookmark')
   .createBookmark
-const loadBookmarks = require('../../core/interactors/loadBookmarks')
+const loadBookmarks = require('../../core/bookmark/interactors/loadBookmarks')
   .loadBookmarks
-const deleteBookmark = require('../../core/interactors/deleteBookmark')
+const deleteBookmark = require('../../core/bookmark/interactors/deleteBookmark')
   .deleteBookmark
-const findBookmarks = require('../../core/interactors/findBookmarks')
+const findBookmarks = require('../../core/bookmark/interactors/findBookmarks')
   .findBookmarks
 
 const createBookmarkCustoms = require('./HTTPAdapterCustoms')

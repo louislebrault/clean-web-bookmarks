@@ -50,25 +50,45 @@ function onContainerScroll({
   }
 }
 
+function displayBookmarks(bookmarks) {
+  for (let i = 0; i < bookmarks.length; i++) {
+    appendHTML(bookmarkToHTML(bookmarks[i]))
+  }
+  initDeleteButtons()
+}
+
 // Si on fait comme ça ça veut dire qu'a chaque fois qu'on fait une
 // recherche par exemple, va falloir réassigner les parametres de onContainerScroll.
 
 // On a besoin qu'onContainerScroll trouve dans son contexte les paramètres de la
 // requete qu'il doit faire
 
-let context = {
-  isSearch = false,
-  sortByDate = -1,
-  sortByTitle = false,
-  sortByUrl = false
+let appState = {
+  lastPage: null,
+  isSearch: false,
+  sortByDate: -1,
+  sortByTitle: false,
+  sortByUrl: false
 }
 
 // A chaque fois qu'une fonction comme onContainerScroll doit lancer une requete,
 // elle regarde le contexte et en déduie les paramètres de sa requete
 
-function displayBookmarks(bookmarks) {
-  for (let i = 0; i < bookmarks.length; i++) {
-    appendHTML(bookmarkToHTML(bookmarks[i]))
+function getLoadRequestOptions(){
+  let options = {
+    page = appState.lastPage
   }
-  initDeleteButtons()
+  if (appState.isSearch) {
+    options.seartchString = searchInput.value
+  }
+  if (appState.sortByDate && appState.sortByDate != -1) {
+    options.sortByDate = appState.sortByDate
+  }
+  if (appState.sortByTitle) {
+    options.sortByTitle = appState.sortByTitle
+  }
+  if (appState.sortByUrl) {
+    options.sortByUrl = appState.sortByUrl
+  }
+  return options
 }
