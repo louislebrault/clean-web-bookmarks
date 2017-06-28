@@ -71,7 +71,7 @@ let appState = {
   sortByUrl: false
 }
 
-// A chaque fois qu'une fonction comme onContainerScroll doit lancer une requete,
+// A chaque foi qu'une fonction comme onContainerScroll doit lancer une requete,
 // elle regarde le contexte et en déduie les paramètres de sa requete
 
 function getLoadRequestOptions(){

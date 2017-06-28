@@ -17,6 +17,7 @@ let MongoPlug = {
         console.log("Connected successfully to mongo db");
       } catch (e) {
         console.log(e)
+        console.log('Connection to database FAILED')
       }
     })
   },
